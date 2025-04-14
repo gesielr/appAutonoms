@@ -1,0 +1,65 @@
+# Arquivos e pastas do Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.pnp/
+.pnp.js
+
+# Arquivos e pastas do Expo
+.expo/
+.expo-shared/
+web-build/
+dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Arquivos e pastas do macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Arquivos e pastas do Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Arquivos e pastas do Android/IntelliJ
+build/
+.idea
+.gradle
+local.properties
+*.iml
+*.hprof
+
+# Arquivos e pastas do iOS
+ios/Pods/
+*.xcworkspace
+*.xcuserstate
+
+# Arquivos e pastas do TypeScript
+*.tsbuildinfo
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Arquivos de log
+logs
+*.log
+
+# Arquivos de cobertura
+coverage/
+
+# Arquivos temporários
+tmp/
+temp/
