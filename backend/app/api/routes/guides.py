@@ -9,6 +9,9 @@ from app.db.database import get_db
 from app.db.models import Usuario, Guia, TipoGuia, StatusGuia, CategoriaContribuinte
 from app.schemas.guia import GuiaSchema, GuiaCreate, GuiaStatus, GuiaList, CompetenciasDisponiveis, CategoriasDisponiveis, CompetenciaInfo, CategoriaInfo, CategoriaContribuinte, CodigoPagamento
 from app.tasks.guia_tasks import gerar_guia_task
+from fastapi.responses import FileResponse
+import os
+from app.core.config import settings
 
 router = APIRouter()
 
@@ -165,6 +168,30 @@ def get_guide_status(
         )
     
     return {"id": guia.id, "status": guia.status}
+
+@router.get("/{guia_id}/download", response_class=FileResponse)
+def download_guide_pdf(
+    guia_id: int,
+    current_user: Usuario = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    guia = db.query(Guia).filter(
+        Guia.id == guia_id,
+        Guia.usuario_id == current_user.id
+    ).first()
+    if not guia or not guia.pdf_url:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="PDF da guia não encontrado"
+        )
+    filename = os.path.basename(guia.pdf_url)
+    file_path = os.path.join(settings.PDF_STORAGE_PATH, filename)
+    if not os.path.isfile(file_path):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Arquivo PDF não encontrado no servidor"
+        )
+    return FileResponse(file_path, media_type="application/pdf", filename=filename)
 
 @router.get("/competencias", response_model=CompetenciasDisponiveis)
 def get_competencias_disponiveis(current_user: Usuario = Depends(get_current_user)):

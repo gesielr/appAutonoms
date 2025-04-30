@@ -34,8 +34,8 @@ type Guide = {
 };
 
 export default function GuideDetailsScreen() {
-  const route = useRoute<GuideDetailsRouteProp>();
-  const navigation = useNavigation<GuideDetailsNavigationProp>();
+  const route = useRoute() as GuideDetailsRouteProp;
+  const navigation = useNavigation() as GuideDetailsNavigationProp;
   const { guideId } = route.params;
   
   const [guide, setGuide] = useState<Guide | null>(null);
@@ -434,6 +434,16 @@ export default function GuideDetailsScreen() {
             
             {guide.pdf_url && (
               <Button
+                mode="contained"
+                style={styles.previewButton}
+                onPress={() => Linking.openURL(guide.pdf_url)}
+              >
+                Visualizar PDF
+              </Button>
+            )}
+            
+            {guide.pdf_url && (
+              <Button
                 mode="outlined"
                 loading={downloadingPdf}
                 disabled={downloadingPdf}
@@ -681,6 +691,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#0066CC',
   },
   downloadButton: {
+    marginLeft: 8,
+  },
+  previewButton: {
     marginLeft: 8,
   },
   nfText: {

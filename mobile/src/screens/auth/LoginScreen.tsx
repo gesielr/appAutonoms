@@ -4,7 +4,6 @@ import { TextInput, Button, Text, Snackbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MaskedTextInput } from 'react-native-mask-text';
 import { useAuth } from '../../context/AuthContext';
 
 // Tipo para as rotas de navegação
@@ -81,15 +80,26 @@ export default function LoginScreen() {
               label="CPF"
               mode="outlined"
               style={styles.input}
-              keyboardType="number-pad"
-              render={props => (
-                <MaskedTextInput
-                  {...props}
-                  mask="999.999.999-99"
-                  value={cpf}
-                  onChangeText={setCpf}
-                />
-              )}
+              keyboardType="numeric"
+              value={cpf}
+              onChangeText={(text) => {
+                // Aplicar máscara manualmente
+                const cleaned = text.replace(/\D/g, '');
+                let formatted = cleaned;
+                
+                if (cleaned.length <= 3) {
+                  formatted = cleaned;
+                } else if (cleaned.length <= 6) {
+                  formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+                } else if (cleaned.length <= 9) {
+                  formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
+                } else {
+                  formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`;
+                }
+                
+                setCpf(formatted);
+              }}
+              maxLength={14} // 999.999.999-99 (14 caracteres)
             />
 
             <TextInput

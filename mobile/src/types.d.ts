@@ -1,9 +1,9 @@
 // Declarações de módulos para bibliotecas sem tipos disponíveis
 
-// Declaração para react-native (caso o módulo não seja encontrado)
-declare module 'react-native' {
-  export * from '@types/react-native';
-}
+// // Declaração para react-native (caso o módulo não seja encontrado)
+// declare module 'react-native' {
+//   export * from '@types/react-native';
+// }
 
 declare module 'react-native-paper' {
   export const Text: any;

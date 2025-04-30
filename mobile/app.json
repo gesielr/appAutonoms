@@ -2,23 +2,19 @@
   "expo": {
     "name": "Guias INSS",
     "slug": "app-autonomo-inss",
-    "experiments": {
-      "newArchEnabled": true
-    },
+    "sdkVersion": "52.0.0",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "light", 
+    "newArchEnabled": true,
+
     "splash": {
       "image": "./assets/logoapp.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff" 
+      "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": { "supportsTablet": true },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logoapp.png",
@@ -27,9 +23,11 @@
       "package": "com.rebelo.guiasinss"
     },
     "extra": {
-      "eas": {
-        "projectId": "your-project-id"
-      }
+      "eas": { "projectId": "your-project-id" }
+    },
+    "plugins": ["expo-secure-store"],
+    "updates": {
+      "fallbackToCacheTimeout": 0
     }
   }
 }

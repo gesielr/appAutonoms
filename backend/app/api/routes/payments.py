@@ -7,6 +7,11 @@ from app.db.database import get_db
 from app.db.models import Usuario, Guia, Pagamento, StatusGuia, StatusPagamento
 from app.schemas.pagamento import Pagamento as PagamentoSchema, PagamentoStatus
 from app.tasks.pagamento_tasks import gerar_cobranca_pix, verificar_pagamento_pix
+from pydantic import BaseModel
+
+# Modelo para webhook de pagamento Pix
+class PaymentWebhook(BaseModel):
+    status: str
 
 router = APIRouter()
 
@@ -146,7 +151,7 @@ def get_payment_status(
 @router.post("/{guia_id}/webhook", status_code=status.HTTP_200_OK)
 async def payment_webhook(
     guia_id: int,
-    payload: dict,
+    payload: PaymentWebhook,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
@@ -171,7 +176,7 @@ async def payment_webhook(
     
     # Verificar se o pagamento foi confirmado
     # A estrutura exata do payload depende do provedor de pagamento
-    if "status" in payload and payload["status"] == "PAID":
+    if payload.status == "PAID":
         # Atualizar status do pagamento
         pagamento.status = StatusPagamento.PAGO
         pagamento.paid_at = datetime.now()

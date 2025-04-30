@@ -15,6 +15,7 @@ import GuideHistoryScreen from '../screens/app/GuideHistoryScreen';
 import ProfileScreen from '../screens/app/ProfileScreen';
 import GuideDetailsScreen from '../screens/app/GuideDetailsScreen';
 import PaymentScreen from '../screens/app/PaymentScreen';
+import WelcomeScreen from '../screens/app/WelcomeScreen';
 
 // Definição dos tipos para as pilhas de navegação
 type AuthStackParamList = {
@@ -26,6 +27,7 @@ type AppStackParamList = {
   MainTabs: undefined;
   GuideDetails: { guideId: string };
   Payment: { guideId: string };
+  Welcome: undefined;
 };
 
 type MainTabsParamList = {
@@ -36,9 +38,9 @@ type MainTabsParamList = {
 };
 
 // Criação das pilhas de navegação
-const AuthStack = createNativeStackNavigator<AuthStackParamList>();
-const AppStack = createNativeStackNavigator<AppStackParamList>();
-const MainTabs = createBottomTabNavigator<MainTabsParamList>();
+const AuthStack = createNativeStackNavigator();
+const AppStack = createNativeStackNavigator();
+const MainTabs = createBottomTabNavigator();
 
 // Componente de navegação para as abas principais
 function MainTabsNavigator() {
@@ -103,8 +105,13 @@ export default function Navigation() {
   return (
     <>
       {user ? (
-        // Usuário autenticado - mostrar telas principais
-        <AppStack.Navigator>
+        // Usuário autenticado - mostrar tela de boas-vindas e principais
+        <AppStack.Navigator initialRouteName="Welcome">
+          <AppStack.Screen
+            name="Welcome"
+            component={WelcomeScreen}
+            options={{ headerShown: false }}
+          />
           <AppStack.Screen 
             name="MainTabs" 
             component={MainTabsNavigator} 

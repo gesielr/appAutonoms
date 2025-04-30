@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from webdriver_manager.chrome import ChromeDriverManager
 from app.core.config import settings
+import requests
 
 # Configurar logger
 logger = logging.getLogger(__name__)
@@ -74,12 +75,6 @@ def gerar_guia_sal(nome: str, cpf: str, nit_pis: str, competencia: str, salario_
         # 6. Gerar a guia
         # 7. Baixar o PDF
         
-        # Simulação da automação (em produção, substituir por código real)
-        logger.info("Preenchendo formulário do SAL")
-        time.sleep(2)  # Simular tempo de preenchimento
-        
-        # Exemplo de como seria a implementação real:
-        """
         # Selecionar categoria de segurado
         categoria_select = Select(driver.find_element(By.ID, "formPrincipal:categoria"))
         if codigo_pagamento in ['1007', '1163', '1120']:
@@ -114,27 +109,26 @@ def gerar_guia_sal(nome: str, cpf: str, nit_pis: str, competencia: str, salario_
         # Clicar no botão de gerar GPS
         driver.find_element(By.ID, "formResultado:btnGerarGPS").click()
         
-        # Aguardar geração do PDF
+        # Aguardar link de download do PDF
         WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.ID, "linkDownloadPDF"))
         )
         
         # Obter URL do PDF
         pdf_url = driver.find_element(By.ID, "linkDownloadPDF").get_attribute("href")
-        """
         
-        # Simular a geração do PDF (em produção, usar código acima)
-        logger.info("Gerando PDF da guia")
-        time.sleep(3)  # Simular tempo de geração do PDF
+        # Download do PDF e armazenamento local
+        response = requests.get(pdf_url)
+        storage_dir = os.path.abspath(settings.PDF_STORAGE_PATH)
+        os.makedirs(storage_dir, exist_ok=True)
+        filename = os.path.basename(pdf_url)
+        file_path = os.path.join(storage_dir, filename)
+        with open(file_path, "wb") as f:
+            f.write(response.content)
+        file_url = f"/guias/{filename}"
+        logger.info(f"Guia salva em: {file_path}")
         
-        # Simular URL do PDF gerado
-        # Em produção, esta URL viria do SAL ou seria o caminho para o arquivo baixado
-        pdf_filename = f"gps_{cpf}_{competencia.replace('-', '_')}_{uuid.uuid4().hex[:8]}.pdf"
-        pdf_url = f"https://storage.example.com/guias/{pdf_filename}"
-        
-        logger.info(f"Guia gerada com sucesso: {pdf_url}")
-        
-        return pdf_url
+        return file_url
         
     except Exception as e:
         logger.error(f"Erro na automação do SAL: {str(e)}")

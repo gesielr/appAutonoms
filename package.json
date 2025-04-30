@@ -9,19 +9,19 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~4.0.1",
+    "@expo/webpack-config": "^18.0.1",
     "expo": "^52.0.44",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-native": "0.73.6",
     "react-native-web": "~0.19.13",
-    "@expo/metro-runtime": "~4.0.1",
-    "@expo/webpack-config": "^18.0.1",
     "source-map": "^0.7.4"
   },
   "devDependencies": {
-    "webpack-dev-server": "^4.15.0",
-    "typescript": "^5.3.3",
-    "@types/react": "~18.3.12"
+    "@types/react": "~18.3.12",
+    "typescript": "^5.8.3",
+    "webpack-dev-server": "^4.15.0"
   },
   "private": true
 }

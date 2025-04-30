@@ -57,21 +57,15 @@ def gerar_guia_esocial(nome: str, cpf: str, nit_pis: str, competencia: str, sala
         time.sleep(2)
         
         # Gerar um nome de arquivo único para a guia
-        filename = f"guia_esocial_{uuid.uuid4()}.pdf"
-        file_path = os.path.join(settings.CERTIFICATE_PATH, "..", "guias", filename)
-        
-        # Garantir que o diretório existe
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        
-        # Em um cenário real, aqui seria feito o download do PDF da guia
-        # Como é uma simulação, vamos apenas criar um arquivo vazio
-        with open(file_path, "w") as f:
-            f.write("Simulação de guia eSocial")
-        
-        # URL para acesso ao arquivo
+        filename = f"guia_esocial_{uuid.uuid4().hex[:8]}.pdf"
+        storage_dir = os.path.abspath(settings.PDF_STORAGE_PATH)
+        os.makedirs(storage_dir, exist_ok=True)
+        file_path = os.path.join(storage_dir, filename)
+        # Criar arquivo de simulação (ou salvar PDF real)
+        with open(file_path, "wb") as f:
+            f.write("Simulação de guia eSocial".encode("utf-8"))
         file_url = f"/guias/{filename}"
-        
-        logger.info(f"Guia gerada com sucesso: {file_url}")
+        logger.info(f"Guia salva em: {file_path}")
         return file_url
         
     except Exception as e:

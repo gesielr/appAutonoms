@@ -3,7 +3,6 @@ import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { Text, TextInput, Button, Card, Divider, ActivityIndicator } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
-import { MaskedTextInput } from 'react-native-mask-text';
 
 const ProfileScreen: React.FC = () => {
   const { user, updateUser, signOut } = useAuth();
@@ -114,18 +113,29 @@ const ProfileScreen: React.FC = () => {
               <Text style={styles.fieldLabel}>CPF</Text>
               {editing ? (
                 <TextInput
-                  render={props => (
-                    <MaskedTextInput
-                      {...props}
-                      mask="999.999.999-99"
-                      value={cpf}
-                      onChangeText={setCpf}
-                    />
-                  )}
+                  value={cpf}
+                  onChangeText={(text) => {
+                    // Aplicar máscara manualmente
+                    const cleaned = text.replace(/\D/g, '');
+                    let formatted = cleaned;
+                    
+                    if (cleaned.length <= 3) {
+                      formatted = cleaned;
+                    } else if (cleaned.length <= 6) {
+                      formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+                    } else if (cleaned.length <= 9) {
+                      formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
+                    } else {
+                      formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`;
+                    }
+                    
+                    setCpf(formatted);
+                  }}
                   mode="outlined"
                   style={styles.input}
                   keyboardType="numeric"
                   disabled={loading || true} // CPF não pode ser alterado
+                  maxLength={14} // 999.999.999-99 (14 caracteres)
                 />
               ) : (
                 <Text style={styles.fieldValue}>{user?.cpf}</Text>
@@ -136,18 +146,29 @@ const ProfileScreen: React.FC = () => {
               <Text style={styles.fieldLabel}>NIT/PIS</Text>
               {editing ? (
                 <TextInput
-                  render={props => (
-                    <MaskedTextInput
-                      {...props}
-                      mask="999.99999.99-9"
-                      value={nitPis}
-                      onChangeText={setNitPis}
-                    />
-                  )}
+                  value={nitPis}
+                  onChangeText={(text) => {
+                    // Aplicar máscara manualmente
+                    const cleaned = text.replace(/\D/g, '');
+                    let formatted = cleaned;
+                    
+                    if (cleaned.length <= 3) {
+                      formatted = cleaned;
+                    } else if (cleaned.length <= 8) {
+                      formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+                    } else if (cleaned.length <= 10) {
+                      formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3, 8)}.${cleaned.slice(8)}`;
+                    } else {
+                      formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3, 8)}.${cleaned.slice(8, 10)}-${cleaned.slice(10, 11)}`;
+                    }
+                    
+                    setNitPis(formatted);
+                  }}
                   mode="outlined"
                   style={styles.input}
                   keyboardType="numeric"
                   disabled={loading}
+                  maxLength={14} // 999.99999.99-9 (14 caracteres)
                 />
               ) : (
                 <Text style={styles.fieldValue}>{user?.nit_pis}</Text>

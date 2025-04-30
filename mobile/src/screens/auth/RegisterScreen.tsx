@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // @ts-ignore - Ignorando erros de TypeScript nas importações
-import { StyleSheet, View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { TextInput, Button, Text, Snackbar, RadioButton } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaskedTextInput } from 'react-native-mask-text';
@@ -103,110 +103,139 @@ export default function RegisterScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoidingView}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
       >
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <View style={styles.formContainer}>
-            <Text style={styles.formTitle}>Cadastro</Text>
-            
-            <TextInput
-              label="Nome completo"
-              mode="outlined"
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-            />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView 
+            contentContainerStyle={styles.scrollView}
+            showsVerticalScrollIndicator={true}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.formContainer}>
+              <Text style={styles.formTitle}>Cadastro</Text>
+              
+              <TextInput
+                label="Nome completo"
+                mode="outlined"
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+              />
 
-            <TextInput
-              label="E-mail"
-              mode="outlined"
-              style={styles.input}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={setEmail}
-            />
+              <TextInput
+                label="E-mail"
+                mode="outlined"
+                style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+              />
 
-            <TextInput
-              label="CPF"
-              mode="outlined"
-              style={styles.input}
-              keyboardType="number-pad"
-              render={props => (
-                <MaskedTextInput
-                  {...props}
-                  mask="999.999.999-99"
-                  value={cpf}
-                  onChangeText={setCpf}
-                />
-              )}
-            />
+              <TextInput
+                label="CPF"
+                mode="outlined"
+                style={styles.input}
+                keyboardType="numeric"
+                value={cpf}
+                onChangeText={(text) => {
+                  // Aplicar máscara manualmente
+                  const cleaned = text.replace(/\D/g, '');
+                  let formatted = cleaned;
+                  
+                  if (cleaned.length <= 3) {
+                    formatted = cleaned;
+                  } else if (cleaned.length <= 6) {
+                    formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+                  } else if (cleaned.length <= 9) {
+                    formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
+                  } else {
+                    formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`;
+                  }
+                  
+                  setCpf(formatted);
+                }}
+                maxLength={14} // 999.999.999-99 (14 caracteres)
+              />
 
-            <TextInput
-              label="NIT/PIS"
-              mode="outlined"
-              style={styles.input}
-              keyboardType="number-pad"
-              render={props => (
-                <MaskedTextInput
-                  {...props}
-                  mask="999.99999.99-9"
-                  value={nitPis}
-                  onChangeText={setNitPis}
-                />
-              )}
-            />
+              <TextInput
+                label="NIT/PIS"
+                mode="outlined"
+                style={styles.input}
+                keyboardType="numeric"
+                value={nitPis}
+                onChangeText={(text) => {
+                  // Aplicar máscara manualmente
+                  const cleaned = text.replace(/\D/g, '');
+                  let formatted = cleaned;
+                  
+                  if (cleaned.length <= 3) {
+                    formatted = cleaned;
+                  } else if (cleaned.length <= 8) {
+                    formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+                  } else if (cleaned.length <= 10) {
+                    formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3, 8)}.${cleaned.slice(8)}`;
+                  } else {
+                    formatted = `${cleaned.slice(0, 3)}.${cleaned.slice(3, 8)}.${cleaned.slice(8, 10)}-${cleaned.slice(10, 11)}`;
+                  }
+                  
+                  setNitPis(formatted);
+                }}
+                maxLength={14} // 999.99999.99-9 (14 caracteres)
+              />
 
-            <Text style={styles.categoryLabel}>Categoria de Contribuinte</Text>
-            <RadioButton.Group onValueChange={(value) => setCategory(value as any)} value={category}>
-              <View style={styles.radioOption}>
-                <RadioButton value="INDIVIDUAL" />
-                <Text>Individual (Autônomo)</Text>
-              </View>
-              <View style={styles.radioOption}>
-                <RadioButton value="DOMESTICO" />
-                <Text>Empregador Doméstico</Text>
-              </View>
-              <View style={styles.radioOption}>
-                <RadioButton value="FACULTATIVO" />
-                <Text>Facultativo</Text>
-              </View>
-            </RadioButton.Group>
+              <Text style={styles.categoryLabel}>Categoria de Contribuinte</Text>
+              <RadioButton.Group onValueChange={(value) => setCategory(value as any)} value={category}>
+                <View style={styles.radioOption}>
+                  <RadioButton value="INDIVIDUAL" />
+                  <Text>Individual (Autônomo)</Text>
+                </View>
+                <View style={styles.radioOption}>
+                  <RadioButton value="DOMESTICO" />
+                  <Text>Empregador Doméstico</Text>
+                </View>
+                <View style={styles.radioOption}>
+                  <RadioButton value="FACULTATIVO" />
+                  <Text>Facultativo</Text>
+                </View>
+              </RadioButton.Group>
 
-            <TextInput
-              label="Senha"
-              mode="outlined"
-              style={styles.input}
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
-              right={
-                <TextInput.Icon
-                  icon={showPassword ? 'eye-off' : 'eye'}
-                  onPress={() => setShowPassword(!showPassword)}
-                />
-              }
-            />
+              <TextInput
+                label="Senha"
+                mode="outlined"
+                style={styles.input}
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+                right={
+                  <TextInput.Icon
+                    icon={showPassword ? 'eye-off' : 'eye'}
+                    onPress={() => setShowPassword(!showPassword)}
+                  />
+                }
+              />
 
-            <TextInput
-              label="Confirmar senha"
-              mode="outlined"
-              style={styles.input}
-              secureTextEntry={!showPassword}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
+              <TextInput
+                label="Confirmar senha"
+                mode="outlined"
+                style={styles.input}
+                secureTextEntry={!showPassword}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
 
-            <Button
-              mode="contained"
-              style={styles.button}
-              loading={loading}
-              disabled={loading}
-              onPress={handleRegister}
-            >
-              Cadastrar
-            </Button>
-          </View>
-        </ScrollView>
+              <Button
+                mode="contained"
+                style={styles.button}
+                loading={loading}
+                disabled={loading}
+                onPress={handleRegister}
+              >
+                Cadastrar
+              </Button>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
 
       <Snackbar
@@ -235,6 +264,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flexGrow: 1,
     padding: 20,
+    paddingBottom: 40, // Adiciona espaço extra no final para rolagem
   },
   formContainer: {
     backgroundColor: '#fff',

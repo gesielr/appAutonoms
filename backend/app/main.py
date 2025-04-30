@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 import os
 from dotenv import load_dotenv
 
@@ -26,6 +27,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Montar static files para PDFs das guias
+storage_path = os.path.abspath(settings.PDF_STORAGE_PATH)
+os.makedirs(storage_path, exist_ok=True)
+app.mount("/guias", StaticFiles(directory=storage_path), name="guias")
 
 # Incluir rotas
 app.include_router(auth.router, prefix="/auth", tags=["Autenticação"])

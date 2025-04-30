@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     NF_API_KEY: str = os.getenv("NF_API_KEY", "")
     NF_API_URL: str = os.getenv("NF_API_URL", "")
     
+    # Path local para armazenamento de PDFs gerados
+    PDF_STORAGE_PATH: str = os.getenv("PDF_STORAGE_PATH", "./storage/guias")
+    
     # Configurações de CORS
     CORS_ORIGINS: List[str] = json.loads(os.getenv("CORS_ORIGINS", '["http://localhost:3000"]'))
     
@@ -45,4 +48,3 @@ class Settings(BaseSettings):
 # Instância das configurações
 settings = Settings()
 print("Conectando em:", os.getenv("DATABASE_URL"))
-
